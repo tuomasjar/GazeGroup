@@ -3,6 +3,13 @@ Gaze Estimation Group Project:
 Sources:
 https://github.com/luxonis/depthai-experiments
 https://docs.openvino.ai/2020.1/_models_intel_head_pose_estimation_adas_0001_description_head_pose_estimation_adas_0001.html
+
+- https://caffe.berkeleyvision.org/
+- Tait-Bryan angles (Hieman muokattu Euler kulmat) Yaw, pitch, roll
+	- Pitch on nousu eli lentokoneessa nousu/laskukulma
+	- Roll on kierto eli lentokoneen kaarron kiertokulma
+	- Yaw on maansuuntainen kulma eli laivassa peräsimen tekemä kääntö
+
 https://docs.openvino.ai/latest/omz_models_model_gaze_estimation_adas_0002.html
 
 Creating pipeline...

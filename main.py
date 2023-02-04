@@ -8,7 +8,7 @@ import blobconverter
 import cv2
 import depthai
 import numpy as np
-from math import cos, sin
+from math import sin,cos,atan2
 
 
 parser = argparse.ArgumentParser()
@@ -18,12 +18,16 @@ parser.add_argument('-vid', '--video', type=str, help="Path to video file to be 
 parser.add_argument('-laz', '--lazer', action="store_true", help="Lazer mode")
 #Added portion:
 parser.add_argument('-bb','--blackbox',action ="store_true", help="Ingognito mode")
+parser.add_argument('-gg','--googlyeyes',action = "store_true", help = "Draw googly eyes")
 args = parser.parse_args()
 
 debug = not args.no_debug
 camera = not args.video
 #Added Portion
 if args.blackbox:
+    args.camera = True
+
+if args.googlyeyes:
     args.camera = True
 
 if args.camera and args.video:
@@ -345,7 +349,6 @@ class Main:
                     le_y = (self.left_bbox[1] + self.left_bbox[3]) // 2
 
                     x, y = (self.gaze * 100).astype(int)[:2]
-
                     #Modified portion:
                     if args.lazer and not args.blackbox:
                         beam_img = np.zeros(self.debug_frame.shape, np.uint8)
@@ -354,7 +357,7 @@ class Main:
                             cv2.line(beam_img, (le_x, le_y), ((le_x + x*100), (le_y - y*100)), (0, 0, 255-t*10), t*2)
                         self.debug_frame |= beam_img
                     #Modified Portion:
-                    elif not args.blackbox:
+                    elif not args.blackbox and not args.googlyeyes:
                         cv2.arrowedLine(self.debug_frame, (le_x, le_y), (le_x + x, le_y - y), (255, 0, 255), 3)
                         cv2.arrowedLine(self.debug_frame, (re_x, re_y), (re_x + x, re_y - y), (255, 0, 255), 3)
 
@@ -363,9 +366,28 @@ class Main:
                     if self.left_bbox is not None:
                         if self.right_bbox is not None:
                             cv2.rectangle(self.debug_frame, (self.left_bbox[0],self.left_bbox[1]),(self.right_bbox[2],self.right_bbox[3]),(0,0,0),-1)
+                
+                if args.googlyeyes:
+                    if self.left_bbox is not None:
+                        eye_radius = abs(self.left_bbox[0]-self.left_bbox[2])//2
+                        pupil_radius = abs(self.left_bbox[0]-self.left_bbox[2])//4
+                        pupil_angle = atan2(y,x)
+                        pupil_x = int(cos(pupil_angle)*(eye_radius-pupil_radius))
+                        pupil_y = int(sin(pupil_angle)*(eye_radius-pupil_radius))
+                        cv2.circle(self.debug_frame, (le_x, le_y),eye_radius,(255,255,255),-1)
+                        cv2.circle(self.debug_frame, (le_x + pupil_x, le_y - pupil_y), pupil_radius , (0,0,0), -1)
+
+                    if self.right_bbox is not None:
+                        eye_radius = abs(self.left_bbox[0]-self.left_bbox[2])//2
+                        pupil_radius = abs(self.left_bbox[0]-self.left_bbox[2])//4
+                        pupil_angle = atan2(y,x)
+                        pupil_x = int(cos(pupil_angle)*(eye_radius-pupil_radius))
+                        pupil_y = int(sin(pupil_angle)*(eye_radius-pupil_radius))
+                        cv2.circle(self.debug_frame, (re_x, re_y),eye_radius,(255,255,255),-1)
+                        cv2.circle(self.debug_frame, (re_x + pupil_x, re_y - pupil_y), pupil_radius,(0,0,0),-1)
 
                 #Modified portion:
-                if not args.lazer and not args.blackbox:
+                if not args.lazer and not args.blackbox and not args.googlyeyes:
                     for raw_bbox in self.bboxes:
                         bbox = frame_norm(self.frame, raw_bbox)
                         cv2.rectangle(self.debug_frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (10, 245, 10), 2)
