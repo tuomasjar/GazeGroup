@@ -7,10 +7,16 @@ https://docs.openvino.ai/2020.1/_models_intel_head_pose_estimation_adas_0001_des
 - https://caffe.berkeleyvision.org/
 - Tait-Bryan angles (Hieman muokattu Euler kulmat) Yaw, pitch, roll
 	- Pitch on nousu eli lentokoneessa nousu/laskukulma
-	- Roll on kierto eli lentokoneen kaarron kiertokulma
+	- Roll on kierto eli lentokoneen kaarron kiertokulma (https://en.wikipedia.org/wiki/Euler_angles)
 	- Yaw on maansuuntainen kulma eli laivassa peräsimen tekemä kääntö
 
 https://docs.openvino.ai/latest/omz_models_model_gaze_estimation_adas_0002.html
+
+- Ottaa kolme tietoa:
+	- Vasemman silmän kuvan
+	- Oikean silmän kuvan
+	- Pään asennon Euler kulmat
+- Tuottaa 3D-vektorin, joka kuvaa henkilön katseen suunnan, jossa z-akseli on silmien keskeltä kohti kameraa. 
 
 Creating pipeline...
 Yhteys Kameraan
@@ -32,3 +38,18 @@ Lisäsin startti argumentin -bb ja --blackbox, joka aktivoi sitten silmien peitt
 (-cam on kameran kuvasta tehdään juttuja ja -vid on valmiista video kuvasta)
 
 Jos haluaa normi katseen arvioinnin niin voi käynnistää ihan -cam
+
+
+Ehkäpä tämä olisi parempi esimerkki katseen suunnan seuraamisesta:
+
+Googly eyes:
+- Starttaa 
+> python3 main.py -gg
+
+tai
+
+> python3 main.py --googlyeyes
+
+- Tunnistaa katseen suunnan ja piirtää valkoisen silmän silmän päälle ja siitä sitten musta pupilli katseen suunnan mukaan
+ 
+
