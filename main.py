@@ -349,14 +349,14 @@ class Main:
                     le_y = (self.left_bbox[1] + self.left_bbox[3]) // 2
 
                     x, y = (self.gaze * 100).astype(int)[:2]
-                    #Modified portion:
+
                     if args.lazer and not args.blackbox:
                         beam_img = np.zeros(self.debug_frame.shape, np.uint8)
                         for t in range(10)[::-2]:
                             cv2.line(beam_img, (re_x, re_y), ((re_x + x*100), (re_y - y*100)), (0, 0, 255-t*10), t*2)
                             cv2.line(beam_img, (le_x, le_y), ((le_x + x*100), (le_y - y*100)), (0, 0, 255-t*10), t*2)
                         self.debug_frame |= beam_img
-                    #Modified Portion:
+
                     elif not args.blackbox and not args.googlyeyes:
                         cv2.arrowedLine(self.debug_frame, (le_x, le_y), (le_x + x, le_y - y), (255, 0, 255), 3)
                         cv2.arrowedLine(self.debug_frame, (re_x, re_y), (re_x + x, re_y - y), (255, 0, 255), 3)
@@ -371,22 +371,19 @@ class Main:
                     if self.left_bbox is not None:
                         eye_radius = abs(self.left_bbox[0]-self.left_bbox[2])//2
                         pupil_radius = abs(self.left_bbox[0]-self.left_bbox[2])//4
-                        pupil_angle = atan2(y,x)
-                        pupil_x = int(cos(pupil_angle)*(eye_radius-pupil_radius))
-                        pupil_y = int(sin(pupil_angle)*(eye_radius-pupil_radius))
+                        pupil_x = int((eye_radius-pupil_radius)*(x/50))
+                        pupil_y = int((eye_radius-pupil_radius)*(y/50))
                         cv2.circle(self.debug_frame, (le_x, le_y),eye_radius,(255,255,255),-1)
                         cv2.circle(self.debug_frame, (le_x + pupil_x, le_y - pupil_y), pupil_radius , (0,0,0), -1)
 
                     if self.right_bbox is not None:
                         eye_radius = abs(self.left_bbox[0]-self.left_bbox[2])//2
                         pupil_radius = abs(self.left_bbox[0]-self.left_bbox[2])//4
-                        pupil_angle = atan2(y,x)
-                        pupil_x = int(cos(pupil_angle)*(eye_radius-pupil_radius))
-                        pupil_y = int(sin(pupil_angle)*(eye_radius-pupil_radius))
+                        pupil_x = int((eye_radius-pupil_radius)*(x/50))
+                        pupil_y = int((eye_radius-pupil_radius)*(y/50))
                         cv2.circle(self.debug_frame, (re_x, re_y),eye_radius,(255,255,255),-1)
                         cv2.circle(self.debug_frame, (re_x + pupil_x, re_y - pupil_y), pupil_radius,(0,0,0),-1)
 
-                #Modified portion:
                 if not args.lazer and not args.blackbox and not args.googlyeyes:
                     for raw_bbox in self.bboxes:
                         bbox = frame_norm(self.frame, raw_bbox)
