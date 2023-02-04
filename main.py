@@ -16,10 +16,15 @@ parser.add_argument('-nd', '--no-debug', action="store_true", help="Prevent debu
 parser.add_argument('-cam', '--camera', action="store_true", help="Use DepthAI 4K RGB camera for inference (conflicts with -vid)")
 parser.add_argument('-vid', '--video', type=str, help="Path to video file to be used for inference (conflicts with -cam)")
 parser.add_argument('-laz', '--lazer', action="store_true", help="Lazer mode")
+#Added portion:
+parser.add_argument('-bb','--blackbox',action ="store_true", help="Ingognito mode")
 args = parser.parse_args()
 
 debug = not args.no_debug
 camera = not args.video
+#Added Portion
+if args.blackbox:
+    args.camera = True
 
 if args.camera and args.video:
     raise ValueError("Incorrect command line parameters! \"-cam\" cannot be used with \"-vid\"!")
@@ -341,18 +346,26 @@ class Main:
 
                     x, y = (self.gaze * 100).astype(int)[:2]
 
-                    if args.lazer:
+                    #Modified portion:
+                    if args.lazer and not args.blackbox:
                         beam_img = np.zeros(self.debug_frame.shape, np.uint8)
                         for t in range(10)[::-2]:
                             cv2.line(beam_img, (re_x, re_y), ((re_x + x*100), (re_y - y*100)), (0, 0, 255-t*10), t*2)
                             cv2.line(beam_img, (le_x, le_y), ((le_x + x*100), (le_y - y*100)), (0, 0, 255-t*10), t*2)
                         self.debug_frame |= beam_img
-
-                    else:
+                    #Modified Portion:
+                    elif not args.blackbox:
                         cv2.arrowedLine(self.debug_frame, (le_x, le_y), (le_x + x, le_y - y), (255, 0, 255), 3)
                         cv2.arrowedLine(self.debug_frame, (re_x, re_y), (re_x + x, re_y - y), (255, 0, 255), 3)
 
-                if not args.lazer:
+                # Added portion:
+                if args.blackbox:
+                    if self.left_bbox is not None:
+                        if self.right_bbox is not None:
+                            cv2.rectangle(self.debug_frame, (self.left_bbox[0],self.left_bbox[1]),(self.right_bbox[2],self.right_bbox[3]),(0,0,0),-1)
+
+                #Modified portion:
+                if not args.lazer and not args.blackbox:
                     for raw_bbox in self.bboxes:
                         bbox = frame_norm(self.frame, raw_bbox)
                         cv2.rectangle(self.debug_frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (10, 245, 10), 2)
