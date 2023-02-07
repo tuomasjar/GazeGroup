@@ -4,6 +4,9 @@ Sources:
 https://github.com/luxonis/depthai-experiments
 https://docs.openvino.ai/2020.1/_models_intel_head_pose_estimation_adas_0001_description_head_pose_estimation_adas_0001.html
 
+https://www.aptiv.com/en/insights/article/what-is-a-driver-monitoring-system
+Tuosta jotain turvallisuusjuttuja
+
 - https://caffe.berkeleyvision.org/
 - Tait-Bryan angles (Hieman muokattu Euler kulmat) Yaw, pitch, roll
 	- Pitch on nousu eli lentokoneessa nousu/laskukulma
