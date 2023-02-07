@@ -21,18 +21,31 @@ https://docs.openvino.ai/latest/omz_models_model_gaze_estimation_adas_0002.html
 	- Pään asennon Euler kulmat
 - Tuottaa 3D-vektorin, joka kuvaa henkilön katseen suunnan, jossa z-akseli on silmien keskeltä kohti kameraa. 
 
+
+https://pypi.org/project/blobconverter/
+land_nn.setBlobPath(blobconverter.from_zoo(name="landmarks-regression-retail-0009", shaves=4))
+shaves = Specifies number of SHAVE cores that converted model will use
+
 Creating pipeline...
 Yhteys Kameraan
 Creating Color Camera...
+
 Creating Face Detection Neural Network...
 Tunnistetaan naama
+face-detection-retail-0004
+
 Creating Landmarks Detection Neural Network...
 Tunnistetaan pääpiirteet naamasta
+landmarks-regression-retail-0009
+
+
 Creating Head Pose Neural Network...
 Pään asento
+head-pose-estimation-adas-0001
+
 Creating Gaze Estimation Neural Network...
 Katseen suunta arviointi
-
+gaze-estimation-adas-0002
 
 Itse silmien peitto on simppeliä, kun saadaan valmiiksi laatikot silmien paikoista. Sitten vaan otetaan vasemman laatikon yläkulma ja oikean laatikon alakulma ja piirretään siitä laatikko täyteen mustaa.
 

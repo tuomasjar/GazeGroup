@@ -363,12 +363,11 @@ class Main:
 
                 # Added portion:
                 if args.blackbox:
-                    if self.left_bbox is not None:
-                        if self.right_bbox is not None:
+                    if self.gaze is not None and self.left_bbox is not None and self.right_bbox is not None:
                             cv2.rectangle(self.debug_frame, (self.left_bbox[0],self.left_bbox[1]),(self.right_bbox[2],self.right_bbox[3]),(0,0,0),-1)
                 
                 if args.googlyeyes:
-                    if self.left_bbox is not None:
+                    if self.gaze is not None and self.left_bbox is not None:
                         eye_radius = abs(self.left_bbox[0]-self.left_bbox[2])//2
                         pupil_radius = abs(self.left_bbox[0]-self.left_bbox[2])//4
                         pupil_x = int((eye_radius-pupil_radius)*(x/50))
@@ -376,7 +375,7 @@ class Main:
                         cv2.circle(self.debug_frame, (le_x, le_y),eye_radius,(255,255,255),-1)
                         cv2.circle(self.debug_frame, (le_x + pupil_x, le_y - pupil_y), pupil_radius , (0,0,0), -1)
 
-                    if self.right_bbox is not None:
+                    if self.gaze is not None and self.right_bbox is not None:
                         eye_radius = abs(self.left_bbox[0]-self.left_bbox[2])//2
                         pupil_radius = abs(self.left_bbox[0]-self.left_bbox[2])//4
                         pupil_x = int((eye_radius-pupil_radius)*(x/50))
